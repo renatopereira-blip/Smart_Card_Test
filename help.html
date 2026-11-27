@@ -1,0 +1,54 @@
+<section class="section">
+   <h1 class="title">{{ entityTitle }}</h1>
+   <h2 class="subtitle">
+     {{ entityDescription }}
+   </h2>
+ </section>
+<div class="container is-fluid">
+   TESTING DATA VARIABLES
+   <br/><br/><br/>
+   <b>ccptReaData</b> = {ccpt: ["basicInformation.name", "basicInformation.surname", "testeXPMT.gender", "civilInformation.dateOfBirth", "identificationNumbers.healthNo", "identificationNumbers.taxNo", "identificationNumbers.socialSecurityNo","cardValues.cardNumberPAN"]};
+   <br/>
+   <b>ccptReaData2</b> = {ccpt: ["basicInformation.name","basicInformation.surname","basicInformation.nic","civilInformation.gender","civilInformation.height","civilInformation.nacionality","civilInformation.dateOfBirth","civilInformation.civilianIdNumber","civilInformation.surnameMother","civilInformation.givenNameMother","civilInformation.surnameFather","civilInformation.accidentalIndications","identificationNumbers.taxNo","identificationNumbers.socialSecurityNo","identificationNumbers.healthNo","identificationNumbers.mrz1","identificationNumbers.mrz2","identificationNumbers.mrz3","cardValues.issuingEntiy","cardValues.country","cardValues.documentNumber","cardValues.documentNumberPAN","cardValues.documentVersion","cardValues.validityBeginDate","cardValues.localofRequest","cardValues.validityEndDate"]};
+   <br/>
+   <b>ccptReaDataRNU</b> ={'ccpt': [ "basicInformation.name", 
+                         "basicInformation.surname", 
+                         "civilInformation.dateOfBirth", 
+                         "basicInformation.civilianIdNumber",
+                         "identificationNumbers.healthNo", 
+                         "identificationNumbers.taxNo", 
+                         "identificationNumbers.socialSecurityNo"
+                        ]
+                  };  
+   <br/>
+   <b>onlyTaxNumber</b> =	{'ccpt': [ "identificationNumbers.taxNo" ] };
+   <br/>
+   <b>omptReaData</b> = {ompt: []};
+   <br/>
+   <b>cegerReaData</b> = {ceger: []};
+   <br/>
+   <b>pdfSettings</b> = {
+               "xLocation": "370",
+               "yLocation": "30",
+               "height": "120",
+               "width": "170",
+               "pageSign": "1",
+               "multipleSignatures": "true"
+               }
+   <br/>
+   <b>docXmlToSign</b> = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" ><soapenv:Header><wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-OXXX4BK9AFDHH28J"><wsse:Username>SPMS_MANUTENCAO</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">5pm5!man</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">VzlaR0syNVZFNUxEM0ZJMw==</wsse:Nonce><wsu:Created>2018-05-24T14:33:45</wsu:Created></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><ms:PrescricaoMSPProcessRequest xmlns:es4="http://xmlns.dmm.spms.pt/201701/MSP/EstruturaMSPServicos" xmlns:es3="http://xmlns.rnu.pi.acss.ms.pt/201001/RegistoMSP/EstruturaUtente" xmlns:es2="http://xmlns.dmm.spms.pt/201207/EstruturaProfissional" xmlns:es1="http://xmlns.dmm.spms.pt/201207/EstruturaEntidade" xmlns:ms="http://xmlns.dmm.spms.pt/201701/MSP/MSPPrescricao" xmlns:xm="http://www.w3.org/2000/09/xmldsig#" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:es="http://xmlns.dmm.spms.pt/201701/MSP/EstruturaMSP" xmlns:in="http://xmlns.dmm.spms.pt/201207/Integration"><ms:Cabecalho><in:EnviadoEm>2018-05-24T14:33:44+00:00</in:EnviadoEm><in:ActivadoEm>2018-05-24T14:33:44+00:00</in:ActivadoEm><in:ChavePedido>MQRP8IXZ-8200-EE82-E820-203C0</in:ChavePedido></ms:Cabecalho><ms:Corpo><ms:RequisicoesMSP><ms:RequisicaoMSP><es:CabecalhoRequisicao><es:NumeroLocal>6169696</es:NumeroLocal><es:Data>2018-05-24T00:00:00+00:00</es:Data><es:NVias>1</es:NVias><es:SubsistemaResponsavel><es:Entidade><es1:Codigo>935601</es1:Codigo><es1:Designacao>SNS</es1:Designacao><es1:DominioEntidade>EFRPT</es1:DominioEntidade></es:Entidade><es:Cartao/></es:SubsistemaResponsavel><es:Profissional><es2:NumCedula>28602</es2:NumCedula><es2:Ordem>05</es2:Ordem><es2:NomeClinico>ANABELA MATEYS</es2:NomeClinico><es2:Especialidade><es2:Descricao>MEDICINA GERAL E FAMILIAR</es2:Descricao></es2:Especialidade></es:Profissional><es:LocalPrescricao><es1:Codigo>3113400</es1:Codigo><es1:Designacao>DR J PAULINO</es1:Designacao></es:LocalPrescricao><es:EpisodioID>146018</es:EpisodioID><es:ExameDomicilio><es:Domicilio>N</es:Domicilio></es:ExameDomicilio><es:ExameUrgente><es:Urgente>N</es:Urgente></es:ExameUrgente><es:EmissaoExterna><es:Externa>N</es:Externa></es:EmissaoExterna><es:NotificacaoRequisicao><es:TipoNotificacao>1</es:TipoNotificacao></es:NotificacaoRequisicao></es:CabecalhoRequisicao><es:Utente><es3:NumeroSNS>398620256</es3:NumeroSNS><es3:NICS>3113400990770</es3:NICS><es3:NomeCompleto>ANTONIO CARLOS PEREIRA MACHADO SILVA</es3:NomeCompleto><es3:DataNascimento>1976-10-13T00:00:00+00:00</es3:DataNascimento></es:Utente><es:ListaItemsRequisicao><es:ItemRequisicao><es:MSP><es:CodigoMSP>1211.9</es:CodigoMSP><es:AreaMSP>A</es:AreaMSP></es:MSP><es:Produto>9</es:Produto><es:NAmostras>1</es:NAmostras><es:RequerAutorizacao>N</es:RequerAutorizacao></es:ItemRequisicao></es:ListaItemsRequisicao></ms:RequisicaoMSP></ms:RequisicoesMSP></ms:Corpo></ms:PrescricaoMSPProcessRequest></soapenv:Body></soapenv:Envelope>'
+   <br/>
+   <b>prescription</b>
+   <br/>
+   <b>prescription1</b>
+   <br/>
+   <b>prescription2</b>
+   <br/>
+   <b>prescription2sign</b>
+   <br/>
+   <b>auth_userdata_requested</b>
+   <br/>
+   <b>authorized_attributes</b>
+   <br/><br/><br/>
+   TESTING METHODS (Insert Testing Variables Inside Text Boxes)
+</div>

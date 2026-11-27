@@ -1,0 +1,440 @@
+<div class="columns">
+  <div class="column">
+    <section class="section">
+      <h1 class="title">{{ entityTitle }}</h1>
+      <h2 class="subtitle">
+        {{ entityDescription }}
+      </h2>
+    </section>
+    <div class="columns">
+      <div class="column">
+        <ul @statusChanged="updateStatus">
+          <li style="padding: 5px;" v-if="!cardStatus.isConnected">
+            <article class="message is-danger">
+              <div class="message-header">
+                <p>Card present.</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="iscardStatusOpen = !iscardStatusOpen">
+                  <span class="icon" v-if="!iscardStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="iscardStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="iscardStatusOpen">
+                <table>
+                  <tr v-if="!cardStatus.isConnected">
+                    <td>Card not inserted or no card reader</td>
+                  </tr>
+                  <tr v-if="!cardStatus.cardType">
+                    <td>Card type: '{{ cardStatus.cardType }}'</td>
+                  </tr>
+                  <tr v-if="cardStatus.readerName">
+                    <td>Reader is '{{ cardStatus.readerName }}'</td>
+                  </tr>
+                </table>
+              </div>
+            </article>
+          </li>
+
+          <li style="padding: 5px;" v-if="cardStatus.isConnected">
+            <article class="message is-success">
+              <div class="message-header">
+                <p>Card info</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="iscardStatusOpen = !iscardStatusOpen">
+                  <span class="icon" v-if="!iscardStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="iscardStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="iscardStatusOpen">
+                <table class="table">
+                  <tr>
+                    <td>Card reader connected</td>
+                  </tr>
+                  <tr v-if="cardStatus.cardType == 'PCC'">
+                    <td>Card type: Cartão Cidadão</td>
+                  </tr>
+                  <tr v-if="cardStatus.cardType == 'PCM'">
+                    <td>Cartão Ordem dos Médicos</td>
+                  </tr>
+                  <tr v-if="cardStatus.cardSerial">
+                    <td>Card Serial is '{{ cardStatus.cardSerial.slice(0, 20) }}[...]'</td>
+                  </tr>
+                  <tr v-if="cardStatus.readerName">
+                    <td>Reader is '{{ cardStatus.readerName }}'</td>
+                  </tr>
+                </table>
+              </div>
+            </article>
+          </li>
+
+          <li style="padding: 5px;" v-if="cardStatus.cardPublicDataObject">
+            <article class="message is-success">
+              <div class="message-header">
+                <p>Public Data</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isPublicDataOpen = !isPublicDataOpen">
+                  <span class="icon" v-if="!isPublicDataOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isPublicDataOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isPublicDataOpen">
+                <table class="table">
+                  <template v-for="(value, property) in cardStatus.cardPublicDataObject">
+                  <tr v-if="property != 'Picture'">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+              </div>
+            </article>
+          </li>
+          <!--
+          <li style="padding: 5px;" v-if="cardStatus.isConnected">
+            <div class="notification is-success">Card inserted</div>
+          </li>
+          <li style="padding: 5px;" v-if="!cardStatus.isConnected">
+            <div class="notification is-danger">Card is not inserted</div>
+          </li>
+          <li style="padding: 5px;" v-if="cardStatus.cardSerial">
+            <div class="notification is-success">Card Serial is '{{ cardStatus.cardSerial.slice(0, 20) }}[...]'</div>
+          </li>
+          <li style="padding: 5px;" v-if="!cardStatus.cardSerial">
+            <div class="notification is-danger">Card Serial not available</div>
+          </li>
+          <li style="padding: 5px;" v-if="cardStatus.readerName">
+            <div class="notification is-success">Reader is '{{ cardStatus.readerName}}'</div>
+          </li>
+          <li style="padding: 5px;" v-if="!cardStatus.readerName">
+            <div class="notification is-danger">Reader Name not available</div>
+          </li>
+          -->
+        </ul>
+      </div>
+      <div class="column">
+        <ul>
+          <li style="padding: 5px;" v-if="cardStatus.authCertificate">
+            <article class="message is-success">
+              <div class="message-header">
+                <p>auth Certificate is available</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isAuthCertStatusOpen = !isAuthCertStatusOpen">
+                  <span class="icon" v-if="!isAuthCertStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isAuthCertStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isAuthCertStatusOpen">
+                <span class="is-size-4">Issuer</span>
+                <table class="table">
+                  <tr v-for="(value, property) in cardStatus.authCertificateSubject.issuer">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Subject</span>
+                <table class="table">
+                  <tr v-for="(value, property) in cardStatus.authCertificateSubject.subject">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Card Validity</span>
+                <table class="table">
+                  <tr>
+                    <td><b>Begin</b></td>
+                    <td>{{ cardStatus.authCertificateSubject.cardValidity.begin }}</td>
+                  </tr>
+                  <tr>
+                    <td><b>End</b></td>
+                    <td>{{ cardStatus.authCertificateSubject.cardValidity.end }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Subject Public Key</span>
+                <table class="table">
+                  <tr>
+                    <td><b>KTY</b></td>
+                    <td>{{ cardStatus.authCertificateSubject.subjectPublicKey.kty }}</td>
+                  </tr>
+                  <tr v-if="cardType != 'PCC2'">
+                    <td><b>n</b></td>
+                    <td>{{ cardStatus.authCertificateSubject.subjectPublicKey.n.slice(0,20) }}[...]</td>
+                  </tr>
+                  <tr>
+                    <td><b>KTY</b></td>
+                    <td>{{ cardStatus.authCertificateSubject.subjectPublicKey.e }}</td>
+                  </tr>
+
+                </table>
+                <span class="is-size-4">Extensions</span>
+                <table class="table">
+                  <tr v-for="(extension, key) in cardStatus.authCertificateSubject.extensions">
+                    <td><b>{{ key }}</b></td>
+                    <td v-if="typeof extension == 'string'">{{ extension }}</td>
+                    <td v-if="typeof extension == 'object'">
+                      <table class="table">
+                        <tr v-for="item in extension">
+                          <td v-if="!item[0]">
+                            <table class="table">
+                              <tr v-for="(value, property) in item">
+                                <td><b>{{ property }}</b></td>
+                                <td>{{ value }}</td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td v-if="item[0]">
+                            <td>{{ item }}</td>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </article>
+          </li>
+
+          <li style="padding: 5px;" v-if="!cardStatus.authCertificateSubject">
+            <article class="message is-danger">
+              <div class="message-header">
+                <p>Auth Certificate is not available</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isAuthCertStatusOpen = !isAuthCertStatusOpen">
+                  <span class="icon" v-if="!isAuthCertStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isAuthCertStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isAuthCertStatusOpen">
+                No Auth Certificate Found
+              </div>
+            </article>
+          </li>
+
+          <li style="padding: 5px;" v-if="cardStatus.signCertificateSubject">
+            <article class="message is-success">
+              <div class="message-header">
+                <p>Sign Certificate is available</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isSignCertStatusOpen = !isSignCertStatusOpen">
+                  <span class="icon" v-if="!isSignCertStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isSignCertStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isSignCertStatusOpen">
+                <span class="is-size-4">Issuer</span>
+                <table class="table">
+                  <tr v-for="(value, property) in cardStatus.signCertificateSubject.issuer">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Subject</span>
+                <table class="table">
+                  <tr v-for="(value, property) in cardStatus.signCertificateSubject.subject">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Card Validity</span>
+                <table class="table">
+                  <tr>
+                    <td><b>Begin</b></td>
+                    <td>{{ cardStatus.signCertificateSubject.cardValidity.begin }}</td>
+                  </tr>
+                  <tr>
+                    <td><b>End</b></td>
+                    <td>{{ cardStatus.signCertificateSubject.cardValidity.end }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Subject Public Key</span>
+                <table class="table">
+                  <tr>
+                    <td><b>KTY</b></td>
+                    <td>{{ cardStatus.signCertificateSubject.subjectPublicKey.kty }}</td>
+                  </tr>
+                  <tr v-if="cardType != 'PCC2'">
+                    <td><b>n</b></td>
+                    <td>{{ cardStatus.signCertificateSubject.subjectPublicKey.n.slice(0,20) }}[...]</td>
+                  </tr>
+                  <tr>
+                    <td><b>KTY</b></td>
+                    <td>{{ cardStatus.signCertificateSubject.subjectPublicKey.e }}</td>
+                  </tr>
+
+                </table>
+                <span class="is-size-4">Extensions</span>
+                <table class="table">
+                  <tr v-for="(extension, key) in cardStatus.signCertificateSubject.extensions">
+                    <td><b>{{ key }}</b></td>
+                    <td v-if="typeof extension == 'string'">{{ extension }}</td>
+                    <td v-if="typeof extension == 'object'">
+                      <table class="table">
+                        <tr v-for="item in extension">
+                          <td v-if="!item[0]">
+                            <table class="table">
+                              <tr v-for="(value, property) in item">
+                                <td><b>{{ property }}</b></td>
+                                <td>{{ value }}</td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td v-if="item[0]">
+                            <td>{{ item }}</td>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </article>
+          </li>
+          <li style="padding: 5px;" v-if="!cardStatus.signCertificateSubject">
+            <article class="message is-danger">
+              <div class="message-header">
+                <p>Sign Certificate is not available</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isSignCertStatusOpen = !isSignCertStatusOpen">
+                  <span class="icon" v-if="!isSignCertStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isSignCertStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isSignCertStatusOpen">
+                No Sign certificate found
+              </div>
+            </article>
+          </li>
+
+
+          <li style="padding: 5px;" v-if="cardStatus.issuerCertificateSubject">
+            <article class="message is-success">
+              <div class="message-header">
+                <p>Issuer Certificate is available</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isIssuerCertStatusOpen = !isIssuerCertStatusOpen">
+                  <span class="icon" v-if="!isIssuerCertStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isIssuerCertStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isIssuerCertStatusOpen">
+                <span class="is-size-4">Issuer</span>
+                <table class="table">
+                  <tr v-for="(value, property) in cardStatus.issuerCertificateSubject.issuer">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Subject</span>
+                <table class="table">
+                  <tr v-for="(value, property) in cardStatus.issuerCertificateSubject.subject">
+                    <td><b>{{ property }}</b></td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Card Validity</span>
+                <table class="table">
+                  <tr>
+                    <td><b>Begin</b></td>
+                    <td>{{ cardStatus.issuerCertificateSubject.cardValidity.begin }}</td>
+                  </tr>
+                  <tr>
+                    <td><b>End</b></td>
+                    <td>{{ cardStatus.issuerCertificateSubject.cardValidity.end }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Subject Public Key</span>
+                <table class="table">
+                  <tr>
+                    <td><b>KTY</b></td>
+                    <td>{{ cardStatus.issuerCertificateSubject.subjectPublicKey.kty }}</td>
+                  </tr>
+                  <tr v-if="cardType != 'PCC2'">
+                    <td><b>N</b></td>
+                    <td>{{ cardStatus.issuerCertificateSubject.subjectPublicKey.n.slice(0,20) }}[...]</td>
+                  </tr>
+                  <tr>
+                    <td><b>E</b></td>
+                    <td>{{ cardStatus.issuerCertificateSubject.subjectPublicKey.e }}</td>
+                  </tr>
+                </table>
+                <span class="is-size-4">Extensions</span>
+                <table class="table">
+                  <tr v-for="(extension, key) in cardStatus.issuerCertificateSubject.extensions">
+                    <td><b>{{ key }}</b></td>
+                    <td v-if="typeof extension == 'string'">{{ extension }}</td>
+                    <td v-if="typeof extension == 'object'">
+                      <table class="table">
+                        <tr v-for="item in extension">
+                          <td v-if="!item[0]">
+                            <table class="table">
+                              <tr v-for="(value, property) in item">
+                                <td><b>{{ property }}</b></td>
+                                <td>{{ value }}</td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td v-if="item[0]">
+                            <td>{{ item }}</td>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </article>
+          </li>
+          <li style="padding: 5px;" v-if="!cardStatus.issuerCertificateSubject">
+            <article class="message is-danger">
+              <div class="message-header">
+                <p>Issuer Certificate Subject is not available</p>
+                <button class="card-header-icon" aria-label="more options"
+                  @click="isIssuerCertStatusOpen = !isIssuerCertStatusOpen">
+                  <span class="icon" v-if="!isIssuerCertStatusOpen">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isIssuerCertStatusOpen">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="message-body" v-if="isIssuerCertStatusOpen">
+                No Issuer Certificate found
+              </div>
+            </article>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

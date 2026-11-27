@@ -1,0 +1,1 @@
+export const smallTextDoc = "RXN0YSDDqSB1bWEgaW5mb3JtYcOnw6NvIGVtIHBsYWluIHRleHQgcGFyYSB0ZXN0ZXM=";

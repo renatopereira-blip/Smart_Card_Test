@@ -1,0 +1,13 @@
+html,
+body {
+  background-color: #ffffff;
+}
+
+[v-cloak] {
+   display: none;
+ }
+
+ .home-container {
+  background-image: url(https://sla-install.min-saude.pt/img/imagenm-background.png);
+  background-repeat: no-repeat;
+ }

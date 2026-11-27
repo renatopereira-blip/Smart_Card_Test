@@ -1,0 +1,18 @@
+<section class="section">
+  <h1 class="title">{{ entityTitle }}</h1>
+  <h2 class="subtitle">
+    {{ entityDescription }}
+  </h2>
+</section>
+<div class="content m-6">
+  <h1 class="title">Card Public Identification Data</h1>
+  <section class="section has-background-info-light">
+    <table class="table">
+      <tr v-for="(value, property) in cardStatus.cardPublicDataObject">
+        <td><b>{{ property }}</b></td>
+        <td v-if="value.length < 200">{{ value }}</td>
+        <td v-if="value.length >= 200">{{ value.slice(0,150) }}[...]</td>
+      </tr>
+    </table>
+  </section>
+</div>

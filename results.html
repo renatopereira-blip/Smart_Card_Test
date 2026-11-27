@@ -1,0 +1,144 @@
+<div class="is-size-4">
+   <div class="columns">
+      <div class="column has-text-centered">
+         <button class="button is-info p-2" id="currentResultBtn" @click="getCurrentResult">
+            <span style="margin: 3px; align-items: start;">
+               <i class="fas fa-rotate-right"></i>
+            </span>
+            <span style="padding: 3px">
+               Current Result
+            </span>
+         </button>
+      </div>
+      <div class="column has-text-centered">
+         <button class="button is-primary p-2" id="pastResultsBtn" @click="getPastResults">
+            <span style="margin: 3px; align-items: start;">
+               <i class="fas fa-rotate-right"></i>
+            </span>
+            <span style="padding: 3px">
+               Past Results
+            </span>
+         </button>
+      </div>
+   </div>
+</div>
+<div class="m-1">
+   <ul style="list-style-type: none;">
+      <li style="padding: 5px;" v-if="currentResult">
+         <article class="message is-info">
+            <div class="message-header">
+               <p>Current Result</p>
+               <button class="card-header-icon" aria-label="more options"
+                  @click="isCurrentResultOpen = !isCurrentResultOpen; getCurrentResult()">
+                  <span class="icon" v-if="!isCurrentResultOpen">
+                     <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isCurrentResultOpen">
+                     <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+               </button>
+            </div>
+            <div class="message-body" v-if="isCurrentResultOpen && currentResult">
+               <span class="is-size-4 pb-2">{{ currentResult.body.programName }}</span>
+               <table class="table">
+                  <tr v-for="(resultValue, key) in currentResult">
+                    <td><b>{{ key }}:</b></td>
+                    <td v-if="typeof resultValue != 'object'">{{ resultValue }}</td>
+                    <td v-if="typeof resultValue == 'object'">
+                      <table class="table">
+                        <tr v-for="(item, itemKey) in resultValue">
+                          <td v-if="!item[0]">
+                            <table class="table">
+                              <tr v-for="(value, property) in item">
+                                <td><b>{{ property }}:</b></td>
+                                <td>
+                                 <div style="overflow-wrap: break-word; width: 450px;">
+                                    {{ value }}
+                                 </div>
+                              </td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td v-if="item[0]">
+                            <td><b>{{ itemKey }}:</b></td>
+                            <td>
+                              <div style="overflow-wrap: break-word; width: 450px;">
+                                 {{ item }}
+                              </div>
+                           </td>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+            </div>
+            <div class="message-body" v-if="isCurrentResultOpen && !currentResult">
+               <div class="notification is-danger">No current result available</div>
+            </div>
+         </article>
+      </li>
+      <li style="padding: 5px;" v-if="!currentResult">
+         <div class="notification is-danger">No current result available</div>
+      </li>
+      <li style="padding: 5px;" v-if="pastResults">
+         <article class="message is-primary">
+            <div class="message-header">
+               <p>Past Results</p>
+               <button class="card-header-icon" aria-label="more options"
+                  @click="isPastResultsOpen = !isPastResultsOpen; getPastResults()">
+                  <span class="icon" v-if="!isPastResultsOpen">
+                     <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon" v-if="isPastResultsOpen">
+                     <i class="fas fa-angle-up" aria-hidden="true"></i>
+                  </span>
+               </button>
+            </div>
+            <div class="message-body" v-if="isPastResultsOpen && pastResults">
+               <div v-for="pastResult in pastResults">
+                  <span class="is-size-4 pb-2">{{ pastResult.body.programName }}</span>
+                  <table class="table">
+                     <tr v-for="(resultValue, key) in pastResult">
+                       <td><b>{{ key }}:</b></td>
+                       <td v-if="typeof resultValue != 'object'">{{ resultValue }}</td>
+                       <td v-if="typeof resultValue == 'object'">
+                         <table class="table">
+                           <tr v-for="(item, itemKey) in resultValue">
+                             <td v-if="!item[0]">
+                               <table class="table">
+                                 <tr v-for="(value, property) in item">
+                                   <td><b>{{ property }}:</b></td>
+                                   <td>
+                                    <div style="overflow-wrap: break-word; width: 450px;">
+                                       {{ value }}
+                                    </div>
+                                 </td>
+                                 </tr>
+                               </table>
+                             </td>
+                             <td v-if="item[0]">
+                               <td><b>{{ itemKey }}:</b></td>
+                               <td>
+                                 <div style="overflow-wrap: break-word; width: 450px;">
+                                    {{ item }}
+                                 </div>
+                              </td>
+                             </td>
+                           </tr>
+                         </table>
+                       </td>
+                     </tr>
+                   </table>
+               </div>
+            </div>
+            <div class="message-body" v-if="isCurrentResultOpen && !pastResults">
+               <div class="notification is-danger">No past results available</div>
+            </div>
+         </article>
+      </li>
+      <li style="padding: 5px;" v-if="!pastResults">
+         <div class="notification is-danger">No past results available</div>
+      </li>
+   </ul>
+</div>

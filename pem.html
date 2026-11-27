@@ -1,0 +1,254 @@
+<section class="section">
+  <h1 class="title">{{ entityTitle }}</h1>
+  <h2 class="subtitle">
+    {{ entityDescription }}
+  </h2>
+</section>
+<!-- Reply -->
+<div class="content m-6">
+  <div class="columns">
+    <div class="column">
+      <div class="notification is-danger" v-if="isError">
+        <button class="delete" @click="isError = false"></button>
+        {{ message }}
+      </div>
+      <!-- Buttons-->
+      <div class="columns">
+        <div class="column">
+          <div class="field has-addons p-2">
+            <p class="control">
+              <button class="button is-primary" id="authenticateBtn" @click="onClickAuthBtn">
+                <span style="margin: 3px; align-items: start;">
+                  <i class="fas fa-right-to-bracket"></i>
+                </span>
+                <span style="padding: 3px">
+                  Authenticate
+                </span>
+              </button>
+            </p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="field has-addons p-2">
+            <p class="control">
+              <div class="select">
+                <select v-model="selectDoc" @change="selectDocChanged">
+                  <option value="none">Select Document</option>
+                  <option value="multi-doc">Multi document</option>
+                  <option value="small-text-document" disabled>Small Text Document</option>
+                  <option value="doc-xml" disabled>XML Document</option>
+                  <option value="prescription-00" disabled>Prescription #00</option>
+                  <option value="prescription-01" disabled>Prescription #01</option>
+                  <option value="prescription-02" disabled>Prescription #02</option>
+                  <option value="prescription-02-sign" disabled>Prescription #02 (sign)</option>
+                  <option value="prescription-pdf">Prescription PDF</option>
+                </select>
+              </div>
+              <button class="button is-warning is-fullwidth" id="signBtn" @click="onClickSignBtn" style="margin-top: 5px;">
+                <span style="margin: 3px; align-items: start;">
+                  <i class="fas fa-signature"></i>
+                </span>
+                <span style="padding: 3px">
+                  Sign
+                </span>
+              </button>
+            </p>
+          </div>
+    
+        </div>
+        <div class="column">
+          <div class="field has-addons p-2">
+            <p class="control">
+              <button class="button is-info" id="pingBtn" @click="onClickPingBtn()">
+                <span style="margin: 3px; align-items: start;">
+                  <i class="fas fa-table-tennis-paddle-ball"></i>
+                </span>
+                <span style="padding: 3px">
+                  Ping
+                </span>
+              </button>
+            </p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="field has-addons p-2">
+            <p class="control">
+              <button class="button is-info" id="pingUIBtn" @click="onClickPingUIBtn()">
+                <span style="margin: 3px; align-items: start;">
+                  <i class="fas fa-table-tennis-paddle-ball"></i>
+                </span>
+                <span style="padding: 3px">
+                  Ping UI
+                </span>
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- SLA Notifications-->
+      <article class="message is-warning">
+        <div class="message-header">
+          <p>SLA Notifications</p>
+          <button class="card-header-icon is-small" aria-label="more options"
+            @click="isSlaAppNotificationOpen = !isSlaAppNotificationOpen">
+            <span class="icon" v-if="!isSlaAppNotificationOpen">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+            <span class="icon" v-if="isSlaAppNotificationOpen">
+              <i class="fas fa-angle-up" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="message-body" v-if="isSlaAppNotificationOpen">
+          <span class="is-size-4 pb-2">{{ slaAppNotification.name }}</span>
+          <table class="table">
+            <tr v-for="(resultValue, key) in slaAppNotification.newValue">
+              <td style="width: 1px;"><b>{{ key }}:</b></td>
+              <td v-if="typeof resultValue != 'object'"
+                style="overflow-wrap: break-word; width: 300px; word-wrap: break-word; word-break: break-all;">{{
+                resultValue }}</td>
+              <td v-if="typeof resultValue == 'object'">
+                <table class="table">
+                  <tr v-for="(item, itemKey) in resultValue">
+                    <td v-if="!item">
+                      <table class="table">
+                        <tr v-for="(value, property) in item">
+                          <td><b>{{ property }}:</b></td>
+                          <td>
+                            <div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">
+                              {{ value }}
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td v-if="item">
+                    <td><b>{{ itemKey }}:</b></td>
+                    <td>
+                      <div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">
+                        {{ item }}
+                      </div>
+                    </td>
+              </td>
+            </tr>
+          </table>
+          </td>
+          </tr>
+          </table>
+        </div>
+      </article>
+      <!-- SLA Waiting Response-->
+      <article class="message is-success">
+        <div class="message-header">
+          <p>SLA Waiting response</p>
+          <button class="card-header-icon is-small" aria-label="more options"
+            @click="isSlaAppWaitResponseOpen = !isSlaAppWaitResponseOpen">
+            <span class="icon" v-if="!isSlaAppWaitResponseOpen">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+            <span class="icon" v-if="isSlaAppWaitResponseOpen">
+              <i class="fas fa-angle-up" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="message-body" v-if="isSlaAppWaitResponseOpen && !slaAppWaitResponse">
+          No Wait Responses!
+        </div>
+        <div class="message-body" v-if="isSlaAppWaitResponseOpen && slaAppWaitResponse">
+          <div v-for="(waitResponse, waitResponseUUID) in slaAppWaitResponse">
+            <span class="is-size-4 pb-2"><strong>{{ waitResponse.command }}</strong> [{{ waitResponseUUID }}]</span>
+            <table class="table">
+              <tr v-for="(resultValue, key) in waitResponse">
+                <td style="width: 1px;"><b>{{ key }}:</b></td>
+                <td v-if="typeof resultValue != 'object'"
+                  style="overflow-wrap: break-word; width: 300px; word-wrap: break-word;">{{
+                  resultValue }}</td>
+                <td v-if="typeof resultValue == 'object'">
+                  <table class="table">
+                    <tr v-for="(item, itemKey) in resultValue">
+                      <td v-if="!item">
+                        <table class="table">
+                          <tr v-for="(value, property) in item">
+                            <td><b>{{ property }}:</b></td>
+                            <td>
+                              <div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">
+                                {{ value }}
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td v-if="item">
+                      <td><b>{{ itemKey }}:</b></td>
+                      <td>
+                        <div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">
+                          {{ item }}
+                        </div>
+                      </td>
+                </td>
+              </tr>
+            </table>
+            </td>
+            </tr>
+            </table>
+          </div>
+        </div>
+      </article>
+      <!-- SCAPI Notifications -->
+      <article class="message is-link">
+        <div class="message-header">
+          <p>SCAPI Notifications</p>
+          <button class="card-header-icon is-small" aria-label="more options"
+            @click="isScAPINotificationOpen = !isScAPINotificationOpen">
+            <span class="icon" v-if="!isScAPINotificationOpen">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+            <span class="icon" v-if="isScAPINotificationOpen">
+              <i class="fas fa-angle-up" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="message-body" v-if="isScAPINotificationOpen">
+          <span class="is-size-4 pb-2">{{ scAPINotification.name }}</span>
+          <table class="table">
+            <tr v-for="(resultValue, key) in scAPINotification.newValue">
+              <td style="width: 1px;"><b>{{ key }}:</b></td>
+              <td v-if="typeof resultValue != 'object'"
+                style="overflow-wrap: break-word; width: 450px; word-wrap: break-word;">{{ resultValue
+                }}</td>
+              <td v-if="typeof resultValue == 'object'">
+                <table class="table">
+                  <tr v-for="(item, itemKey) in resultValue">
+                    <td v-if="!item">
+                      <table class="table">
+                        <tr v-for="(value, property) in item">
+                          <td style="width: 1px;"><b>{{ property }}:</b></td>
+                          <td>
+                            <div style="overflow-wrap: break-word; width: 450px; word-wrap:break-word;">
+                              {{ value }}
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td v-if="item">
+                    <td style="width: 1px;"><b>{{ itemKey }}:</b></td>
+                    <td>
+                      <div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word;">
+                        {{ item }}
+                      </div>
+                    </td>
+              </td>
+            </tr>
+          </table>
+          </td>
+          </tr>
+          </table>
+        </div>
+      </article>
+    </div>
+    <div class="column">
+      <results></results>
+    </div>
+  </div>
+</div>

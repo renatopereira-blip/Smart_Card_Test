@@ -1,0 +1,184 @@
+<div class="card  has-background-info-light" style="margin:10px;">
+  <header class="card-header">
+    <p class="card-header-title">
+      Smart Card Operations
+    </p>
+    <button class="card-header-icon" aria-label="more options" @click="isStatusOpen = !isStatusOpen; getStatus()">
+      <span class="icon" v-if="!isStatusOpen">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+      <span class="icon" v-if="isStatusOpen">
+        <i class="fas fa-angle-up" aria-hidden="true"></i>
+      </span>
+    </button>
+  </header>
+  <div class="card-content" v-if="isStatusOpen">
+    <div class="content">
+      <table class="table">
+        <tr>
+          <td><b>Application Version</b></td>
+          <td>{{ cardStatus.appVersion }}</td>
+        </tr>
+        <tr>
+          <td><b>Serial</b></td>
+          <td v-if="cardSerial">
+            <div style="overflow-wrap: break-word; width: 400px;">
+              {{ cardSerial }}
+            </div>
+          </td>
+          <td style="inline-size: 100px;overflow-wrap: break-word;" v-if="!cardSerial">
+            <button class="button is-info is-fullwidth" id="cardSerialBtn" @click="getCardSerial">
+              <span style="margin: 3px; align-items: start;">
+                <i class="fas fa-hashtag"></i>
+              </span>
+              <span style="padding: 3px;color: white;">
+                Get
+              </span>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Type</b></td>
+          <td>{{ cardStatus.cardType }}</td>
+        </tr>
+        <tr>
+          <td><b>Connection</b></td>
+          <td>
+            <span class="icon" v-if="cardStatus.isConnected">
+              <i class="fas fa-circle" aria-hidden="true" style="color: green;"></i>
+            </span>
+            <span class="icon" v-if="!cardStatus.isConnected">
+              <i class="fas fa-circle" aria-hidden="true" style="color: red;"></i>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Ready</b></td>
+          <td>
+            <span class="icon" v-if="cardStatus.isReady">
+              <i class="fas fa-circle" aria-hidden="true" style="color: green;"></i>
+            </span>
+            <span class="icon" v-if="!cardStatus.isReady">
+              <i class="fas fa-circle" aria-hidden="true" style="color: red;"></i>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Protocol</b></td>
+          <td>{{ cardStatus.protocolName }}</td>
+        </tr>
+        <tr>
+          <td><b>Reader Name</b></td>
+          <td>{{ cardStatus.readerName }}</td>
+        </tr>
+        <tr>
+          <td><b>Public Data</b></td>
+          <td v-if="publicData">
+            <div style="overflow-wrap: break-word; width: 400px;">
+              {{ publicData }}
+            </div>
+          </td>
+          <td v-if="publicData == null">
+            <button class="button is-primary is-fullwidth" id="digitalSignatureCertificateBtn" @click="getPublicData">
+              <span style="margin: 3px; align-items: start;">
+                <i class="fas fa-certificate"></i>
+              </span>
+              <span style="padding: 3px;color: white;">
+                GET
+              </span>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Cert (issuer)</b></td>
+          <td v-if="issuerCertificate">
+            <div style="overflow-wrap: break-word; width: 400px;">
+              {{ issuerCertificate }}
+            </div>
+          </td>
+          <td v-if="!issuerCertificate">
+            <button class="button is-warning is-fullwidth" id="digitalSignatureCertificateIssuerBtn"
+              @click="getIssuerCertificate">
+              <span style="margin: 3px; align-items: start;">
+                <i class="fas fa-id-card"></i>
+              </span>
+              <span style="padding: 3px;color: black;">
+                GET
+              </span>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Cert (auth)</b></td>
+          <td v-if="authenticationCertificate">
+            <div style="overflow-wrap: break-word; width: 400px;">
+              {{ authenticationCertificate }}
+            </div>
+          </td>
+          <td v-if="!authenticationCertificate">
+            <button class="button is-success is-fullwidth" id="signDataBtn" @click="getAuthenticationCertificate">
+              <span style="margin: 3px; align-items: start;">
+                <i class="fas fa-signature"></i>
+              </span>
+              <span style="padding: 3px;">
+                GET
+              </span>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Cert (sign)</b></td>
+          <td v-if="signatureCertificate">
+            <div style="overflow-wrap: break-word; width: 400px;">
+              {{ signatureCertificate }}
+            </div>
+          </td>
+          <td v-if="!signatureCertificate">
+            <button class="button is-success is-fullwidth" id="signDataBtn" @click="getSignatureCertificate">
+              <span style="margin: 3px; align-items: start;">
+                <i class="fas fa-signature"></i>
+              </span>
+              <span style="padding: 3px;">
+                GET
+              </span>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Error</b></td>
+          <td>{{ cardStatus.error }}</td>
+        </tr>
+        <tr>
+          <td><b>Description</b></td>
+          <td>{{ cardStatus.errorDescription }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <footer class="card-footer" v-if="isStatusOpen">
+    <a class="card-footer-item" @click="signInSignature()" style="color: green;">
+      <span style="margin: 3px; align-items: start;">
+        <i class="fas fa-right-to-bracket"></i>
+      </span>
+      <span style="padding: 3px;">
+        Sign In (Signature)
+      </span>
+    </a>
+    <a href="#" class="card-footer-item" @click="signInAuthentication()">
+      <span style="margin: 3px; align-items: start;">
+        <i class="fas fa-right-to-bracket"></i>
+      </span>
+      <span style="padding: 3px;">
+        Sign In (Auth)
+      </span>
+    </a>
+    <a class="card-footer-item" @click="signOut()" style="color: red;">
+      <span style="margin: 3px; align-items: start;">
+        <i class="fas fa-right-from-bracket"></i>
+      </span>
+      <span style="padding: 3px;">
+        Sign Out
+      </span>
+    </a>
+  </footer>
+</div>

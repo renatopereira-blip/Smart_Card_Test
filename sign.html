@@ -1,0 +1,58 @@
+<section class="section">
+  <h1 class="title">{{ entityTitle }}</h1>
+  <h2 class="subtitle">
+    {{ entityDescription }}
+  </h2>
+</section>
+<div class="content m-6">
+  <div class="columns">
+    <div class="column">
+      <label class="label" id="selectDocLabel">
+        <i class="fas fa-file-medical" style="margin-right: 5px;"></i>
+        <span id="message">Select document:</span>
+      </label>
+      <div class="select">
+        <select v-model="selectDoc" @change="selectDocChanged">
+          <option value="none">Select Document</option>
+          <option value="small-text-document">Small Text Document</option>
+          <option value="doc-xml">XML Document</option>
+          <option value="prescription-00">Prescription #00</option>
+          <option value="prescription-01">Prescription #01</option>
+          <option value="prescription-02">Prescription #02</option>
+          <option value="prescription-02-sign">Prescription #02 (sign)</option>
+          <option value="prescription-pdf">Prescription PDF</option>
+        </select>
+      </div>
+      <div class="field has-addons p-2">
+        <p class="control">
+          <button class="button is-warning" id="signBtn" @click="onClickSignBtn">
+            <span style="margin: 3px; align-items: start;">
+              <i class="fas fa-signature"></i>
+            </span>
+            <span style="padding: 3px">
+              Sign
+            </span>
+          </button>
+        </p>
+        <!-- <p class="control">
+          <button class="button is-primary" id="signBtn" @click="onClickGetSignatureBtn">
+            <span style="margin: 3px; align-items: start;">
+              <i class="fas fa-rotate-right"></i>
+            </span>
+            <span style="padding: 3px">
+              Get Signature
+            </span>
+          </button>
+        </p> -->
+      </div>
+
+      <div class="m-3" style="word-wrap: break-word;width: 600px;">
+        <!-- «<p>{{ currentResult }}</p>» -->
+        <p>{{ selectedDoc }}</p>
+      </div>
+    </div>
+    <div class="column" style="background-color:ivory; height: 100%;">
+      <results></results>
+    </div>
+  </div>
+</div>

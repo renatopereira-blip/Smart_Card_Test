@@ -1,0 +1,206 @@
+<section class="section">
+  <h1 class="title">{{ entityTitle }}</h1>
+  <h2 class="subtitle">{{ entityDescription }}</h2>
+</section>
+
+<div class="content m-6">
+  <div class="columns">
+    <div class="column">
+
+      <div class="notification is-danger" v-if="isError">
+        <button class="delete" @click="isError = false"></button>
+        {{ message }}
+      </div>
+
+      <!-- File picker + Sign button -->
+      <div class="columns">
+        <div class="column">
+          <div class="field p-2">
+            <label class="label">PDF File</label>
+            <div class="file has-name is-fullwidth">
+              <label class="file-label">
+                <input class="file-input" type="file" accept=".pdf,application/pdf" @change="onFileSelected">
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span class="file-label">Choose PDF…</span>
+                </span>
+                <span class="file-name">{{ fileName || 'No file selected' }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="column is-narrow" style="display: flex; align-items: flex-end; padding-bottom: 18px;">
+          <button class="button is-warning" id="signPDFBtn" @click="onClickSignBtn" :disabled="!selectedFile || !pdfBase64">
+            <span style="margin: 3px; align-items: start;">
+              <i class="fas fa-file-signature"></i>
+            </span>
+            <span style="padding: 3px">Sign PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PDF Sign Settings -->
+      <article class="message is-light">
+        <div class="message-header" style="cursor: pointer;" @click="isPdfSignSettingsOpen = !isPdfSignSettingsOpen">
+          <p>PDF Sign Settings</p>
+          <span class="icon">
+            <i :class="isPdfSignSettingsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="message-body" v-if="isPdfSignSettingsOpen">
+          <div class="columns is-multiline">
+            <div class="column is-half">
+              <div class="field">
+                <label class="label is-small">X Location</label>
+                <div class="control">
+                  <input class="input is-small" type="text" v-model="pdfSignSettings.xLocation">
+                </div>
+              </div>
+            </div>
+            <div class="column is-half">
+              <div class="field">
+                <label class="label is-small">Y Location</label>
+                <div class="control">
+                  <input class="input is-small" type="text" v-model="pdfSignSettings.yLocation">
+                </div>
+              </div>
+            </div>
+            <div class="column is-half">
+              <div class="field">
+                <label class="label is-small">Width</label>
+                <div class="control">
+                  <input class="input is-small" type="text" v-model="pdfSignSettings.width">
+                </div>
+              </div>
+            </div>
+            <div class="column is-half">
+              <div class="field">
+                <label class="label is-small">Height</label>
+                <div class="control">
+                  <input class="input is-small" type="text" v-model="pdfSignSettings.height">
+                </div>
+              </div>
+            </div>
+            <div class="column is-half">
+              <div class="field">
+                <label class="label is-small">Page</label>
+                <div class="control">
+                  <input class="input is-small" type="text" v-model="pdfSignSettings.pageSign">
+                </div>
+              </div>
+            </div>
+            <div class="column is-half">
+              <div class="field">
+                <label class="label is-small">Multiple Signatures</label>
+                <div class="control">
+                  <div class="select is-small is-fullwidth">
+                    <select v-model="pdfSignSettings.multipleSignatures">
+                      <option value="true">true</option>
+                      <option value="false">false</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLA (plain-sign) Notification -->
+      <article class="message is-warning">
+        <div class="message-header">
+          <p>Step 1 — Plain Sign Notification</p>
+          <button class="card-header-icon is-small" aria-label="more options"
+            @click="isSlaAppNotificationOpen = !isSlaAppNotificationOpen">
+            <span class="icon">
+              <i :class="isSlaAppNotificationOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="message-body" v-if="isSlaAppNotificationOpen">
+          <span class="is-size-4 pb-2">{{ slaAppNotification.name }}</span>
+          <table class="table">
+            <tr v-for="(resultValue, key) in slaAppNotification.newValue">
+              <td style="width: 1px;"><b>{{ key }}:</b></td>
+              <td v-if="typeof resultValue != 'object'"
+                style="overflow-wrap: break-word; width: 300px; word-wrap: break-word; word-break: break-all;">
+                {{ resultValue }}
+              </td>
+              <td v-if="typeof resultValue == 'object'">
+                <table class="table">
+                  <tr v-for="(item, itemKey) in resultValue">
+                    <td v-if="!item">
+                      <table class="table">
+                        <tr v-for="(value, property) in item">
+                          <td><b>{{ property }}:</b></td>
+                          <td><div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">{{ value }}</div></td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td v-if="item">
+                    <td><b>{{ itemKey }}:</b></td>
+                    <td><div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">{{ item }}</div></td>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </article>
+
+      <!-- PDF Sign Notification -->
+      <article class="message is-info">
+        <div class="message-header">
+          <p>Step 2 — PDF Sign Notification</p>
+          <button v-if="signedPdfData" class="button is-small is-success ml-2" @click="downloadPdfBlob(signedPdfData)">
+            <span class="icon is-small"><i class="fas fa-download"></i></span>
+            <span>Download Signed PDF</span>
+          </button>
+          <button class="card-header-icon is-small" aria-label="more options"
+            @click="isPdfSignNotificationOpen = !isPdfSignNotificationOpen">
+            <span class="icon">
+              <i :class="isPdfSignNotificationOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="message-body" v-if="isPdfSignNotificationOpen">
+          <span class="is-size-4 pb-2">{{ pdfSignNotification.name }}</span>
+          <table class="table">
+            <tr v-for="(resultValue, key) in pdfSignNotification.newValue">
+              <td style="width: 1px;"><b>{{ key }}:</b></td>
+              <td v-if="typeof resultValue != 'object'"
+                style="overflow-wrap: break-word; width: 300px; word-wrap: break-word; word-break: break-all;">
+                {{ resultValue }}
+              </td>
+              <td v-if="typeof resultValue == 'object'">
+                <table class="table">
+                  <tr v-for="(item, itemKey) in resultValue">
+                    <td v-if="!item">
+                      <table class="table">
+                        <tr v-for="(value, property) in item">
+                          <td><b>{{ property }}:</b></td>
+                          <td><div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">{{ value }}</div></td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td v-if="item">
+                    <td><b>{{ itemKey }}:</b></td>
+                    <td><div style="overflow-wrap: break-word; width: 450px; word-wrap: break-word">{{ item }}</div></td>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </article>
+
+    </div>
+    <div class="column">
+      <results></results>
+    </div>
+  </div>
+</div>
